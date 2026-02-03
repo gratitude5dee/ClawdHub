@@ -34,7 +34,7 @@ serve(async (req) => {
     }
 
     const parsed = verification.parsedJWT;
-    const address = parsed.sub ?? parsed.address;
+    const address = parsed.sub;
     return jsonResponse(req, { loggedIn: true, address, session: parsed });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Session invalid';

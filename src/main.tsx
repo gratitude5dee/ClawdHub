@@ -11,7 +11,7 @@ const client = createThirdwebClient({
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThirdwebProvider client={client}>
+    <ThirdwebProvider>
       <App client={client} />
     </ThirdwebProvider>
   </React.StrictMode>,
