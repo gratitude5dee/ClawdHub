@@ -1,36 +1,33 @@
 # ClawdHub
 
-New ClawdHub app with a React frontend and a Node API backend.
+ClawdHub app with a React frontend and Supabase Edge Functions backend.
 
 ## Structure
 
-- `clawdhub/web`: React UI (thirdweb auth, Base chain)
-- `clawdhub/api`: Node API (thirdweb auth endpoints, Moltbook identity verification, Supabase persistence)
+- `/` React UI (thirdweb auth, Base chain)
+- `supabase/functions`: Edge Functions (thirdweb auth endpoints, Moltbook identity verification, Supabase persistence)
+- `legacy/api`: Previous Node API (kept for reference)
 
 ## Environment
 
-### API (`clawdhub/api/.env`)
-
-```
-PORT=3001
-APP_ORIGIN=http://localhost:5173
-NODE_ENV=development
-
-THIRDWEB_SECRET_KEY=
-THIRDWEB_PRIVATE_KEY=
-THIRDWEB_DOMAIN=localhost:3001
-
-MOLTBOOK_APP_KEY=
-
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-```
-
-### Web (`clawdhub/web/.env`)
+### Frontend (`.env`)
 
 ```
 VITE_THIRDWEB_CLIENT_ID=
-VITE_API_BASE_URL=http://localhost:3001
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+### Supabase Edge Functions secrets
+
+```
+APP_ORIGIN=http://localhost:5173
+THIRDWEB_SECRET_KEY=
+THIRDWEB_PRIVATE_KEY=
+THIRDWEB_DOMAIN=
+MOLTBOOK_APP_KEY=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
 ```
 
 ## Supabase Tables
@@ -58,20 +55,11 @@ Create these tables (or map to your existing schema) for persistence:
 
 ## Running Locally
 
-Node 18+ recommended (uses built-in `fetch` on the API server).
-
-From `clawdhub/api`:
+From the project root:
 
 ```
 npm install
 npm run dev
 ```
 
-From `clawdhub/web`:
-
-```
-npm install
-npm run dev
-```
-
-The web app expects the API at `http://localhost:3001`.
+Edge Functions should be served via Supabase CLI during local development.

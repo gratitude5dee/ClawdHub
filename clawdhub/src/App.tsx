@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ConnectButton } from 'thirdweb/react';
 import type { ThirdwebClient } from 'thirdweb';
 import { base } from 'thirdweb/chains';
+import { createClient } from '@supabase/supabase-js';
 
 interface AuthSession {
   loggedIn: boolean;
   address?: string | null;
+  session?: unknown;
 }
 
 interface MoltbookAgent {
@@ -20,24 +22,44 @@ interface MoltbookAgent {
   } | null;
 }
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-    ...init,
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase env vars: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const JWT_STORAGE_KEY = 'clawdhub_jwt';
+
+function getStoredJwt(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(JWT_STORAGE_KEY);
+}
+
+function storeJwt(jwt: string | null) {
+  if (typeof window === 'undefined') return;
+  if (jwt) {
+    localStorage.setItem(JWT_STORAGE_KEY, jwt);
+  } else {
+    localStorage.removeItem(JWT_STORAGE_KEY);
+  }
+}
+
+async function invokeFunction<T>(
+  name: string,
+  options?: { body?: unknown; headers?: Record<string, string> },
+): Promise<T> {
+  const { data, error } = await supabase.functions.invoke(name, {
+    body: options?.body,
+    headers: options?.headers,
   });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || response.statusText);
+  if (error) {
+    throw error;
   }
 
-  return response.json() as Promise<T>;
+  return data as T;
 }
 
 export default function App({ client }: { client: ThirdwebClient }) {
@@ -46,40 +68,56 @@ export default function App({ client }: { client: ThirdwebClient }) {
   const [moltbookAgent, setMoltbookAgent] = useState<MoltbookAgent | null>(null);
   const [status, setStatus] = useState<string>('');
 
+  const refreshSession = useCallback(async () => {
+    try {
+      const jwt = getStoredJwt();
+      if (!jwt) {
+        setSession({ loggedIn: false });
+        return;
+      }
+      const data = await invokeFunction<AuthSession>('thirdweb-me', {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      setSession(data);
+    } catch {
+      setSession({ loggedIn: false });
+    }
+  }, []);
+
   const authConfig = useMemo(() => ({
     async getLoginPayload(params: { address: string; chainId?: number }) {
-      return apiRequest('/auth/thirdweb/payload', {
-        method: 'POST',
-        body: JSON.stringify({ address: params.address, chainId: params.chainId }),
+      return invokeFunction('thirdweb-payload', {
+        body: { address: params.address, chainId: params.chainId },
       });
     },
     async doLogin(params: { payload: unknown; signature: string }) {
-      await apiRequest('/auth/thirdweb/login', {
-        method: 'POST',
-        body: JSON.stringify(params),
+      const data = await invokeFunction<{ address: string; jwt: string }>('thirdweb-login', {
+        body: params,
       });
+      storeJwt(data.jwt);
+      await refreshSession();
     },
     async isLoggedIn() {
+      const jwt = getStoredJwt();
+      if (!jwt) return false;
       try {
-        const data = await apiRequest<AuthSession>('/auth/thirdweb/me');
+        const data = await invokeFunction<AuthSession>('thirdweb-me', {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
         return data.loggedIn;
       } catch {
         return false;
       }
     },
     async doLogout() {
-      await apiRequest('/auth/thirdweb/logout', { method: 'POST' });
-    },
-  }), []);
-
-  const refreshSession = useCallback(async () => {
-    try {
-      const data = await apiRequest<AuthSession>('/auth/thirdweb/me');
-      setSession(data);
-    } catch {
+      storeJwt(null);
       setSession({ loggedIn: false });
-    }
-  }, []);
+    },
+  }), [refreshSession]);
 
   useEffect(() => {
     void refreshSession();
@@ -88,8 +126,7 @@ export default function App({ client }: { client: ThirdwebClient }) {
   const verifyMoltbook = async () => {
     setStatus('Verifying Moltbook identity...');
     try {
-      const data = await apiRequest<{ agent: MoltbookAgent }>('/auth/moltbook/verify', {
-        method: 'POST',
+      const data = await invokeFunction<{ agent: MoltbookAgent }>('moltbook-verify', {
         headers: {
           'X-Moltbook-Identity': moltbookToken,
         },

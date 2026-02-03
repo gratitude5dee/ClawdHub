@@ -1,0 +1,26 @@
+import { createThirdwebClient } from 'npm:thirdweb@5.12.4';
+import { createAuth } from 'npm:thirdweb@5.12.4/auth';
+import { privateKeyToAccount } from 'npm:thirdweb@5.12.4/wallets';
+
+function requireEnv(name: string): string {
+  const value = Deno.env.get(name);
+  if (!value) {
+    throw new Error(`Missing environment variable: ${name}`);
+  }
+  return value;
+}
+
+const client = createThirdwebClient({
+  secretKey: requireEnv('THIRDWEB_SECRET_KEY'),
+});
+
+const adminAccount = privateKeyToAccount({
+  client,
+  privateKey: requireEnv('THIRDWEB_PRIVATE_KEY'),
+});
+
+export const thirdwebAuth = createAuth({
+  domain: requireEnv('THIRDWEB_DOMAIN'),
+  client,
+  adminAccount,
+});
