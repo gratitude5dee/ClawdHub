@@ -6,7 +6,7 @@ import App from './App';
 import './styles.css';
 
 const client = createThirdwebClient({
-  clientId: import.meta.env.VITE_THIRDWEB_CLIENT_ID,
+  clientId: 'YOUR_THIRDWEB_CLIENT_ID', // Replace with your thirdweb client ID
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
