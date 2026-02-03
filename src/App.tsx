@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ConnectButton } from 'thirdweb/react';
 import type { ThirdwebClient } from 'thirdweb';
+import type { LoginPayload } from 'thirdweb/auth';
 import { base } from 'thirdweb/chains';
 import { createClient } from '@supabase/supabase-js';
 
@@ -48,7 +49,7 @@ function storeJwt(jwt: string | null) {
 
 async function invokeFunction<T>(
   name: string,
-  options?: { body?: unknown; headers?: Record<string, string> },
+  options?: { body?: Record<string, unknown>; headers?: Record<string, string> },
 ): Promise<T> {
   const { data, error } = await supabase.functions.invoke(name, {
     body: options?.body,
@@ -87,8 +88,8 @@ export default function App({ client }: { client: ThirdwebClient }) {
   }, []);
 
   const authConfig = useMemo(() => ({
-    async getLoginPayload(params: { address: string; chainId?: number }) {
-      return invokeFunction('thirdweb-payload', {
+    async getLoginPayload(params: { address: string; chainId?: number }): Promise<LoginPayload> {
+      return invokeFunction<LoginPayload>('thirdweb-payload', {
         body: { address: params.address, chainId: params.chainId },
       });
     },
