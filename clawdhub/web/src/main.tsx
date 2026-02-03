@@ -1,0 +1,18 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { ThirdwebProvider } from 'thirdweb/react';
+import { createThirdwebClient } from 'thirdweb';
+import App from './App';
+import './styles.css';
+
+const client = createThirdwebClient({
+  clientId: import.meta.env.VITE_THIRDWEB_CLIENT_ID,
+});
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <ThirdwebProvider client={client}>
+      <App client={client} />
+    </ThirdwebProvider>
+  </React.StrictMode>,
+);
