@@ -1,6 +1,6 @@
-import { createThirdwebClient } from 'npm:thirdweb@5.12.4';
-import { createAuth } from 'npm:thirdweb@5.12.4/auth';
-import { privateKeyToAccount } from 'npm:thirdweb@5.12.4/wallets';
+import { createThirdwebClient } from 'npm:thirdweb@^5';
+import { createAuth } from 'npm:thirdweb@^5/auth';
+import { privateKeyToAccount } from 'npm:thirdweb@^5/wallets';
 
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
