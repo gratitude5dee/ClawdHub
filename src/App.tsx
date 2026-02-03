@@ -3,7 +3,7 @@ import { ConnectButton } from 'thirdweb/react';
 import type { ThirdwebClient } from 'thirdweb';
 import type { LoginPayload } from 'thirdweb/auth';
 import { base } from 'thirdweb/chains';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthSession {
   loggedIn: boolean;
@@ -23,14 +23,6 @@ interface MoltbookAgent {
   } | null;
 }
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase env vars: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-}
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const JWT_STORAGE_KEY = 'clawdhub_jwt';
 
 function getStoredJwt(): string | null {
