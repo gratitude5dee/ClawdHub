@@ -1,0 +1,2 @@
+[functions.comment-task]
+verify_jwt = false

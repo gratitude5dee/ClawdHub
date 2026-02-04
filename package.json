@@ -10,9 +10,17 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
+    "@tanstack/react-query": "^5.90.20",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lovable-tagger": "^1.1.13",
+    "lucide-react": "^0.563.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.30.3",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
     "thirdweb": "^5.12.4"
   },
   "devDependencies": {
