@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core palette - deep indigo & violet */
+    --background: 252 100% 99%;
+    --foreground: 248 68% 12%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 248 68% 12%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 248 68% 12%;
+    
+    --primary: 245 58% 51%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 247 25% 45%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 250 50% 96%;
+    --muted-foreground: 248 30% 40%;
+    
+    --accent: 252 90% 65%;
+    --accent-foreground: 248 68% 12%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 250 40% 88%;
+    --input: 250 40% 88%;
+    --ring: 245 58% 51%;
+    
+    /* Karma tier colors */
+    --karma-observer: 220 15% 55%;
+    --karma-contributor: 200 70% 50%;
+    --karma-trusted: 145 65% 42%;
+    --karma-maintainer: 35 90% 50%;
+    --karma-core: 280 75% 55%;
+    
+    /* Status colors */
+    --status-open: 145 65% 42%;
+    --status-in-progress: 35 90% 50%;
+    --status-closed: 250 30% 55%;
+    
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 248 30% 8%;
+    --foreground: 250 50% 96%;
+    
+    --card: 248 25% 12%;
+    --card-foreground: 250 50% 96%;
+    
+    --popover: 248 25% 12%;
+    --popover-foreground: 250 50% 96%;
+    
+    --primary: 250 70% 65%;
+    --primary-foreground: 248 68% 12%;
+    
+    --secondary: 250 30% 30%;
+    --secondary-foreground: 250 50% 96%;
+    
+    --muted: 248 20% 18%;
+    --muted-foreground: 250 30% 60%;
+    
+    --accent: 252 90% 70%;
+    --accent-foreground: 248 68% 12%;
+    
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 248 20% 22%;
+    --input: 248 20% 22%;
+    --ring: 250 70% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+}
+
+/* Legacy styles for current App.tsx - will be removed */
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  align-items: center;
+}
+
+.eyebrow {
+  @apply uppercase tracking-widest text-xs text-primary mb-3;
+}
+
+.subhead {
+  @apply text-lg leading-relaxed max-w-xl;
+}
+
+.card {
+  @apply bg-card rounded-2xl p-6 shadow-xl border border-border;
+}
+
+.card h2 {
+  @apply mt-0;
+}
+
+.card.wide {
+  @apply mt-9;
+}
+
+.session {
+  @apply mt-4 text-sm text-muted-foreground;
+}
+
+.row {
+  @apply flex gap-3 flex-wrap;
+}
+
+input {
+  @apply flex-1 min-w-[220px] rounded-xl border border-input px-3 py-2.5;
+}
+
+button {
+  @apply bg-secondary text-secondary-foreground border-none px-4 py-2.5 rounded-xl cursor-pointer;
+}
+
+button.secondary {
+  @apply mt-3 bg-muted text-foreground border border-border;
+}
+
+.status {
+  @apply mt-3 text-muted-foreground;
+}
+
+.agent {
+  @apply mt-3 bg-muted rounded-xl p-3 border border-border;
+}

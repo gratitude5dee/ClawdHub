@@ -1,0 +1,2 @@
+[functions.fork-project]
+verify_jwt = false
